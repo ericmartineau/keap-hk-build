@@ -33,14 +33,15 @@ chmod +x $HOME/.profile.d/keap-gcp-creds.sh
 echo "------> Generating .profile.d file to generate gradle.properties at startup"
 
 gradleProps=$(cat <<EOF
-ARTIFACTORY_USERNAME=$(echo $ARTIFACTORY_USERNAME)
-ARTIFACTORY_PASSWORD=$(echo $ARTIFACTORY_PASSWORD)
-externalProxyRepositoryPassword=$(echo $externalProxyRepositoryPassword)
-externalProxyRepositoryUsername=$(echo $externalProxyRepositoryUsername)
+ARTIFACTORY_USERNAME=$ARTIFACTORY_USERNAME
+ARTIFACTORY_PASSWORD=$ARTIFACTORY_PASSWORD
+externalProxyRepositoryPassword=$externalProxyRepositoryPassword
+externalProxyRepositoryUsername=$externalProxyRepositoryUsername
 EOF
 )
 
 echo "------> Writing gradle props file $gradleProps"
+cat ~/.gradle/gradle.properties
 mkdir -p ~/.gradle && echo ${gradleProps@Q} > ~/.gradle/gradle.properties
 
 
