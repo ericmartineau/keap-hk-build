@@ -5,4 +5,42 @@ BUILD_DIR=${1:-}
 CACHE_DIR=${2:-}
 ENV_DIR=${3:-}
 
-echo "------> SKIP"
+
+export_env_dir() {
+  env_dir=$1
+  acceptlist_regex=${2:-''}
+  denylist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
+  if [ -d "$env_dir" ]; then
+    for e in $(ls $env_dir); do
+      echo "$e" | grep -E "$acceptlist_regex" | grep -qvE "$denylist_regex" &&
+      export "$e=$(cat $env_dir/$e)"
+      :
+    done
+  fi
+}
+
+export_env_dir
+
+echo "------> Generating .profile.d file to generate credential.json at startup"
+
+CREDENTIALS=$(echo $GCP_CRED)
+
+mkdir -p $HOME/.profile.d
+echo "echo ${CREDENTIALS@Q} | base64 -d > credential.json" > $HOME/.profile.d/keap-gcp-creds.sh
+chmod +x $HOME/.profile.d/keap-gcp-creds.sh
+
+
+echo "------> Generating .profile.d file to generate gradle.properties at startup"
+
+gradleProps=$(cat <<EOF
+ARTIFACTORY_USERNAME=$(echo $ARTIFACTORY_USERNAME)
+ARTIFACTORY_PASSWORD=$(echo $ARTIFACTORY_PASSWORD)
+externalProxyRepositoryPassword=$(echo $externalProxyRepositoryPassword)
+externalProxyRepositoryUsername=$(echo $externalProxyRepositoryUsername)
+EOF
+)
+
+echo "mkdir -p ~/.gradle && echo ${gradleProps@Q} > ~/.gradle/gradle.properties" > $HOME/.profile.d/keap-gradle.sh
+chmod +x $HOME/.profile.d/keap-gradle.sh
+
+
