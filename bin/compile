@@ -41,8 +41,10 @@ EOF
 )
 
 echo "------> Writing gradle props file $gradleProps"
-cat ~/.gradle/gradle.properties
-mkdir -p ~/.gradle && echo ${gradleProps@Q} > ~/.gradle/gradle.properties
+
+mkdir -p $HOME/.gradle 
+echo ${gradleProps@Q} > $HOME/.gradle/gradle.properties
+cat $HOME/.gradle/gradle.properties
 
 
 
