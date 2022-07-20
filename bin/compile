@@ -5,11 +5,10 @@ BUILD_DIR=${1:-}
 CACHE_DIR=${2:-}
 ENV_DIR=${3:-}
 
-
 echo "------> Generating .profile.d file to generate credential.json at startup"
 mkdir -p $BUILD_DIR/.profile.d
 CREDENTIALS=$(cat ${ENV_DIR}/GCP_CREDS | base64 -d)
-echo "echo ${CREDENTIALS@Q} > credentials.json > $BUILD_DIR/.profile.d/keap-gcp-creds.sh
+echo "echo ${CREDENTIALS@Q} > /app/credentials.json > $BUILD_DIR/.profile.d/keap-gcp-creds.sh
 chmod +x $BUILD_DIR/.profile.d/keap-gcp-creds.sh
 
 
@@ -23,7 +22,7 @@ externalProxyRepositoryUsername=$(cat ${ENV_DIR}/externalProxyRepositoryUsername
 EOF
 )
 
-echo "mkdir -p .gradle && echo ${gradleProps@Q} > .gradle/gradle.properties > $BUILD_DIR/.profile.d/keap-gradle.sh
+echo "mkdir -p ~/.gradle && echo ${gradleProps@Q} > ~/.gradle/gradle.properties > $BUILD_DIR/.profile.d/keap-gradle.sh
 chmod +x $BUILD_DIR/.profile.d/keap-gradle.sh
 
 
