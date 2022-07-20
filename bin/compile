@@ -40,7 +40,8 @@ externalProxyRepositoryUsername=$(echo $externalProxyRepositoryUsername)
 EOF
 )
 
-echo "mkdir -p ~/.gradle && echo ${gradleProps@Q} > ~/.gradle/gradle.properties" > $HOME/.profile.d/keap-gradle.sh
-chmod +x $HOME/.profile.d/keap-gradle.sh
+echo "------> Writing gradle props file $gradleProps"
+mkdir -p ~/.gradle && echo ${gradleProps@Q} > ~/.gradle/gradle.properties
+
 
 
