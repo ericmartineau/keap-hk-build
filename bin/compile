@@ -21,30 +21,17 @@ export_env_dir() {
 
 export_env_dir $ENV_DIR
 
+if [ "$GCP_CRED" != "" ]; then
+  echo "------> Adding credential to build directory"
+  echo $GCP_CRED | base64 -d > "${BUILD_DIR}/credential.json"
+fi
+
 echo "------> Generating .profile.d file to generate credential.json at startup"
-
-CREDENTIALS=$(echo $GCP_CRED)
-
 mkdir -p $HOME/.profile.d
-echo "echo ${CREDENTIALS@Q} | base64 -d > credential.json" > $HOME/.profile.d/keap-gcp-creds.sh
+echo 'if [ "$GCP_CRED" != "" ]; then ' > $HOME/.profile.d/keap-gcp-creds.sh
+echo '  echo "Found GCP_CRED"' >> $HOME/.profile.d/keap-gcp-creds.sh
+echo '  echo "$GCP_CRED" | base64 -d > credential.json' >> $HOME/.profile.d/keap-gcp-creds.sh
+echo 'fi' >> $HOME/.profile.d/keap-gcp-creds.sh
 chmod +x $HOME/.profile.d/keap-gcp-creds.sh
-
-
-echo "------> Generating .profile.d file to generate gradle.properties at startup"
-
-gradleProps=$(cat <<EOF
-ARTIFACTORY_USERNAME=$ARTIFACTORY_USERNAME
-ARTIFACTORY_PASSWORD=$ARTIFACTORY_PASSWORD
-externalProxyRepositoryPassword=$externalProxyRepositoryPassword
-externalProxyRepositoryUsername=$externalProxyRepositoryUsername
-EOF
-)
-
-echo "------> Writing gradle props file $gradleProps"
-
-mkdir -p $HOME/.gradle 
-echo ${gradleProps@Q} > $HOME/.gradle/gradle.properties
-cat $HOME/.gradle/gradle.properties
-
 
 
